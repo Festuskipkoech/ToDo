@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { register } from './api'; // Adjust the path as necessary
 
 const Register = ({ navigation }) => {
-  const [error, setError] = useState('');
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleRegister = () => {
-    // Handle registration logic here
+  const handleRegister = async () => {
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      console.error('Passwords do not match');
-    } else {
-      console.log('Registering with', email, password);
+      setMessage("Passwords do not match");
+      return;
+    }
+
+    try {
+      const data = await register(email, password);
+      setMessage('Registration successful');
+      // Optionally, navigate to the login screen
+    } catch (error) {
+      setMessage(error.message || 'Registration failed');
     }
   };
 
@@ -24,7 +29,7 @@ const Register = ({ navigation }) => {
       <Card style={styles.card}>
         <Card.Content>
           <Title>Register</Title>
-          <Paragraph style={styles.errorText}>{error}</Paragraph>
+          <Paragraph>{message}</Paragraph>
           <TextInput
             label="Email"
             value={email}
@@ -78,10 +83,6 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     justifyContent: 'center',
-  },
-  errorText: {
-    color: '#ffa300',
-    marginBottom: 10,
   },
 });
 

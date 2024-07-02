@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { login } from './api';
 
-const LoginScreen = ({ navigation }) => {
+const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleLogin = () => {
-    // Handle login logic here
-    console.log('Logging in with', email, password);
+  const handleLogin = async () => {
+    try {
+      const data = await login(email, password);
+      setMessage('Login successful');
+      // Optionally, navigate to another screen or store the token
+    } catch (error) {
+      setMessage(error.message || 'Login failed');
+    }
   };
 
   return (
@@ -16,6 +23,7 @@ const LoginScreen = ({ navigation }) => {
       <Card style={styles.card}>
         <Card.Content>
           <Title>Login</Title>
+          <Paragraph>{message}</Paragraph>
           <TextInput
             label="Email"
             value={email}
@@ -31,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
             secureTextEntry
             mode="outlined"
           />
-          <Button mode="contained" onPress={handleLogin} style={styles.button}>
+          <Button mode="outlined" onPress={handleLogin} style={styles.button}>
             Login
           </Button>
         </Card.Content>
@@ -64,4 +72,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default Login;
